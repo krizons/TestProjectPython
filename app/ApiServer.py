@@ -1,20 +1,21 @@
 from fastapi import FastAPI, Depends, File, UploadFile, Query
 from fastapi.responses import FileResponse
 from Model import *
-import asyncio
+from dotenv import load_dotenv
+
 from Bd import TestApiBd
 import uvicorn
 import os
 import aiofiles
 import aiofiles.os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
 DEFINE_PATH: str = os.path.abspath(os.path.dirname(__file__)) + "\\files\\"
-print(DEFINE_PATH)
 app = FastAPI()
 
-ApiBd: TestApiBd = TestApiBd(user='postgres', password='12345678',
-                             database='TestApi', host='127.0.0.1',
-                             port='5432')
+ApiBd: TestApiBd = TestApiBd(os.environ["DATABASE_URL"])
 
 
 @app.on_event("startup")
@@ -84,7 +85,7 @@ async def delete_document(req: DeleteDocumentRequest = Depends()):
          response_model=list,
          response_description="Результат запроса на получение всех категорий или подкатегорий выбраной категории")
 async def all_category(req: AllCategoryRequest = Depends()):
-    val = await ApiBd.GetAllCategory(req.subid)
+    val = await ApiBd.GetAllCategory(req.CategoryId)
     data_response = []
     for el in val:
         data_response.append(
@@ -116,6 +117,6 @@ async def get_document(file_id: int):
     return FileResponse(val)
 
 
-#if __name__ == "__main__":
- #   uvicorn.run(app, host="localhost", port=8000)
+if __name__ == "__main__":
+   uvicorn.run(app, host="localhost", port=8000)
 # uvicorn ApiServer:app --reload

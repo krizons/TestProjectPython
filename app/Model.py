@@ -3,6 +3,8 @@ from typing import Optional
 from fastapi import File, UploadFile
 
 
+
+
 class CreateCategoryRequest(BaseModel):
     heading: str
     subtitle: str
