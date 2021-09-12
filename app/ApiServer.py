@@ -1,13 +1,28 @@
-from fastapi import FastAPI, Depends, File, UploadFile, Query
+from fastapi import FastAPI, Depends, HTTPException, status,File,UploadFile
 from fastapi.responses import FileResponse
 from app.Model import *
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from dotenv import load_dotenv
-
+import secrets
 from app.Bd import TestApiBd
 import uvicorn
 import os
 import aiofiles
 import aiofiles.os
+
+security = HTTPBasic()
+
+
+def get_current_username(credentials: HTTPBasicCredentials):
+    correct_username = secrets.compare_digest(credentials.username, os.environ["LOGIN"])
+    correct_password = secrets.compare_digest(credentials.password,  os.environ["PASS"])
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
@@ -33,7 +48,9 @@ async def shutdown():
           summary="Запрос на создание категории или подкатегории",
           response_model=CreateCategoryResponse,
           response_description="Результат запроса на создание категории или подкатегории")
-async def create_category(req: CreateCategoryRequest = Depends()):
+async def create_category(req: CreateCategoryRequest = Depends(),
+                          credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     val = await ApiBd.CreateCategory(req.heading,
                                      req.subtitle,
                                      req.description,
@@ -49,7 +66,8 @@ async def create_category(req: CreateCategoryRequest = Depends()):
           summary="Запрос на изменение категории или подкатегории",
           response_model=EditCategoryResponse,
           response_description="Результат запроса на изменение категории или подкатегории")
-async def edit_category(req: EditCategoryRequest = Depends()):
+async def edit_category(req: EditCategoryRequest = Depends(), credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     if await ApiBd.EditCategory(req.id, req.heading, req.subtitle, req.description, req.subid):
         return EditCategoryResponse(status="OK", result="")
     return EditCategoryResponse(status="Fault", result="")
@@ -59,7 +77,9 @@ async def edit_category(req: EditCategoryRequest = Depends()):
          summary="Запрос на добавление документа в категорию или подкатегорию",
          response_model=AddDocumentResponse,
          response_description="Запрос на добавление документа в категорию или подкатегорию")
-async def add_document(CategoryId: int, Document: UploadFile = File(...)):
+async def add_document(CategoryId: int , Document: UploadFile = File(...),
+                       credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     new_path = DEFINE_PATH + "_" + str(CategoryId) + "_" + Document.filename
     if await ApiBd.AddDocument(CategoryId, Document.filename, new_path):
         async with aiofiles.open(new_path, 'wb') as out_file:
@@ -73,7 +93,9 @@ async def add_document(CategoryId: int, Document: UploadFile = File(...)):
             summary="Запрос на удаление документа из категории или подкатегории",
             response_model=DeleteDocumentResponse,
             response_description="Результат запроса на удаление документа из категории или подкатегории")
-async def delete_document(req: DeleteDocumentRequest = Depends()):
+async def delete_document(req: DeleteDocumentRequest = Depends(),
+                          credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     val = await ApiBd.DeleteDocument(req.Name, req.CategoryId)
     if val is not None:
         await aiofiles.os.remove(val.get("path"))
@@ -85,7 +107,8 @@ async def delete_document(req: DeleteDocumentRequest = Depends()):
          summary="Запрос на получение всех категорий или подкатегорий выбраной категории",
          response_model=list,
          response_description="Результат запроса на получение всех категорий или подкатегорий выбраной категории")
-async def all_category(req: AllCategoryRequest = Depends()):
+async def all_category(req: AllCategoryRequest = Depends(), credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     val = await ApiBd.GetAllCategory(req.CategoryId)
     data_response = []
     for el in val:
@@ -99,7 +122,8 @@ async def all_category(req: AllCategoryRequest = Depends()):
          summary="Запрос на получение всех файлов в выбраной категории или подкатегорий",
          response_model=list,
          response_description="Результат запроса на получение всех файлов в выбраной категории или подкатегорий")
-async def all_document(req: AllDocumentRequest = Depends()):
+async def all_document(req: AllDocumentRequest = Depends(), credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     data_response = []
     val = await ApiBd.GetAllDocument(req.CategoryId)
     for el in val:
@@ -111,7 +135,8 @@ async def all_document(req: AllDocumentRequest = Depends()):
 @app.get("/get/document",
          summary="Запрос на получение файла",
          response_description="Файл")
-async def get_document(file_id: int):
+async def get_document(file_id: int , credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     val = await ApiBd.GetDocument(file_id)
     # response = FileResponse(val)
     return FileResponse(val)
@@ -121,10 +146,10 @@ async def get_document(file_id: int):
             summary="Запрос на далениие категории",
             response_model=DeleteCategoryResponse,
             response_description="Ответ на запрос удаления категории")
-async def delete_category(req: DeleteCategoryRequest= Depends()):
-    # val = await ApiBd.GetDocument(file_id)
-    # response = FileResponse(val)
-    val=await ApiBd.DeleteCategor(req.CategoryId)
+async def delete_category(req: DeleteCategoryRequest = Depends(),
+                          credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
+    val = await ApiBd.DeleteCategor(req.CategoryId)
     for el in val:
         await aiofiles.os.remove(el)
     return DeleteCategoryResponse(status="Ok", result="")
