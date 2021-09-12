@@ -90,6 +90,37 @@ class EditCategoryResponse(BaseModel):
         )
 
 
+class DeleteCategoryRequest(BaseModel):
+    CategoryId: int
+
+    class Config:
+        title = "Запрос на добавление документа"
+        fields = dict(
+            Document=dict(
+                title="Документ"
+            ),
+            CategoryId=dict(
+                title="Id категории или подкатегории"
+            )
+        )
+
+
+class DeleteCategoryResponse(BaseModel):
+    status: str
+    result: str
+
+    class Config:
+        title = "Ответ на запрос добавления файла в категорию"
+        fields = dict(
+            status=dict(
+                title="Статус операции"
+            ),
+            result=dict(
+                title="описание события"
+            )
+        )
+
+
 class AddDocumentRequest(BaseModel):
     Document: UploadFile = File(...)
     CategoryId: int = 0

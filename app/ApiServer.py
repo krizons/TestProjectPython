@@ -108,7 +108,6 @@ async def all_document(req: AllDocumentRequest = Depends()):
     return data_response
 
 
-
 @app.get("/get/document",
          summary="Запрос на получение файла",
          response_description="Файл")
@@ -118,6 +117,19 @@ async def get_document(file_id: int):
     return FileResponse(val)
 
 
+@app.delete("/delete/category",
+            summary="Запрос на далениие категории",
+            response_model=DeleteCategoryResponse,
+            response_description="Ответ на запрос удаления категории")
+async def delete_category(req: DeleteCategoryRequest= Depends()):
+    # val = await ApiBd.GetDocument(file_id)
+    # response = FileResponse(val)
+    val=await ApiBd.DeleteCategor(req.CategoryId)
+    for el in val:
+        await aiofiles.os.remove(el)
+    return DeleteCategoryResponse(status="Ok", result="")
+
+
 if __name__ == "__main__":
-   uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="localhost", port=8000)
 # uvicorn ApiServer:app --reload

@@ -8,7 +8,7 @@ from app.BdModel import Category, Document
 
 
 class TestApiBd:
-    def __init__(self, bd_url:str) -> object:
+    def __init__(self, bd_url: str) -> object:
         self.conn = databases.Database(bd_url)
         self.document = Document
         self.category = Category
@@ -98,6 +98,27 @@ class TestApiBd:
         qu = self.document.select().where(self.document.c.id == id)
         row = await self.conn.fetch_one(qu)
         return row.get("path")
+
+    async def DeleteCategor(self, id: int) -> list:
+        list_id = [id]
+        Qu_id = [id]
+        list_path = []
+        while len(Qu_id) != 0:
+            qu = self.category.select().where(self.category.c.subid == Qu_id[0])
+            row = await self.conn.fetch_all(qu)
+            await self.conn.execute(self.category.delete().where(self.category.c.id == Qu_id[0]))
+            Qu_id.remove(Qu_id[0])
+            for el in row:
+                Qu_id.append(el.get("id"))
+                list_id.append(el.get("id"))
+        print(list_id)
+        for id in list_id:
+            qu = self.document.select().where(self.document.c.lincid == id)
+            row = await self.conn.fetch_all(qu)
+            await self.conn.execute(self.document.delete().where(self.document.c.lincid == id))
+            for el in row:
+                list_path.append(el.get("path"))
+        return list_path
 
     async def Close(self):
         await self.conn.disconnect()
