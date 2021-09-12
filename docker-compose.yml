@@ -2,7 +2,7 @@ version: '3.8'
 services:
   db:
     container_name: postgresql_db
-    image: postgres:11
+    image: 5565917/postgres
     ports:
       - "5432:5432"
     environment:
@@ -11,6 +11,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
   app:
     container_name: app
+    image: 5565917/app
     build: .
     command: bash -c "alembic upgrade head && uvicorn app.ApiServer:app --host 0.0.0.0 --port 8000 --reload"
     ports:
@@ -18,7 +19,8 @@ services:
     restart: always
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4
+    image: 5565917/pgadmin4
+   #image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
