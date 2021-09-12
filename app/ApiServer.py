@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends, File, UploadFile, Query
 from fastapi.responses import FileResponse
-from Model import *
+from app.Model import *
 from dotenv import load_dotenv
 
-from Bd import TestApiBd
+from app.Bd import TestApiBd
 import uvicorn
 import os
 import aiofiles
@@ -20,6 +20,7 @@ ApiBd: TestApiBd = TestApiBd(os.environ["DATABASE_URL"])
 
 @app.on_event("startup")
 async def startup():
+    pass
     await ApiBd.ConnectBd()
 
 
@@ -105,7 +106,7 @@ async def all_document(req: AllDocumentRequest = Depends()):
         data_response.append(
             AllDocumentResponse(name=el.get("name"), url="/get/document?file_id={0}".format(el.get("id"))))
     return data_response
-    return data_response
+
 
 
 @app.get("/get/document",

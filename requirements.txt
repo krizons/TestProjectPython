@@ -1,7 +1,13 @@
 # app
+python-multipart
 fastapi
 uvicorn
 pydantic
 aiofiles
+python-dotenv
+psycopg2
+psycopg2-binary
 # db
-asyncpg
+databases[postgresql]
+SQLAlchemy
+alembic

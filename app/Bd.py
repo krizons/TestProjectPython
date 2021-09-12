@@ -1,7 +1,7 @@
 # import asyncpg
 import databases
 import sqlalchemy
-from BdModel import Category, Document
+from app.BdModel import Category, Document
 
 
 # DATABASE_URL = "postgresql://user:password@postgresserver/db"
@@ -81,7 +81,7 @@ class TestApiBd:
         return row
 
     async def DeleteDocument(self, name: str, categor_id: int):
-        qu = self.document.select("path").where(self.document.c.name == name, self.document.c.lincid == categor_id)
+        qu = self.document.select().where(self.document.c.name == name, self.document.c.lincid == categor_id)
         row = await self.conn.fetch_one(qu)
         if row is not None:
             qu = self.document.delete().where(self.document.c.name == name, self.document.c.lincid == categor_id)
@@ -90,12 +90,12 @@ class TestApiBd:
         return row
 
     async def GetAllDocument(self, subid: int):
-        qu = self.document.select("name", "id").where(self.document.c.lincid == subid)
+        qu = self.document.select().where(self.document.c.lincid == subid)
         row = await self.conn.fetch_all(qu)
         return row
 
     async def GetDocument(self, id: int):
-        qu = self.document.select("name", "id").where(self.document.c.id == id)
+        qu = self.document.select().where(self.document.c.id == id)
         row = await self.conn.fetch_one(qu)
         return row.get("path")
 

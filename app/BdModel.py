@@ -5,7 +5,7 @@ Document = sqlalchemy.Table(
     "document",
     metadata,
     sqlalchemy.Column("name", sqlalchemy.String, nullable=False, unique=True),
-    sqlalchemy.Column("lincid", sqlalchemy.String, nullable=False, unique=True),
+    sqlalchemy.Column("lincid", sqlalchemy.Integer, nullable=False, unique=True),
     sqlalchemy.Column("id", sqlalchemy.Integer, nullable=False, primary_key=True, autoincrement=True),
     sqlalchemy.Column("path", sqlalchemy.String, nullable=False))
 Category = sqlalchemy.Table(

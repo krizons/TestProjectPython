@@ -2,13 +2,13 @@ FROM python:3.6.8
 
 WORKDIR /app
 
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-# By copying over requirements first, we make sure that Docker will cache
-# our installed requirements rather than reinstall them on every build
-COPY requirements.txt /app/requirements.txt
+
+COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-# Now copy in our code, and run it
 COPY . /app
+
 EXPOSE 8000
-CMD ["python", "ApiServer.py", "runserver", "0.0.0.0:8000"]
+#CMD [ "uvicorn", "app.ApiServer:app", "--host","0.0.0.0","--port","8000","--reload"]
