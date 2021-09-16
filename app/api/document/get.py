@@ -1,7 +1,9 @@
 from fastapi import APIRouter
-from app.database import ApiDB
 from fastapi.responses import FileResponse
-
+from app.database import (
+    ApiDB,
+    document
+)
 router = APIRouter()
 
 
@@ -10,5 +12,6 @@ router = APIRouter()
             response_description="Файл")
 async def get_document(file_id: int):  # , credentials: HTTPBasicCredentials = Depends(security)):
     # get_current_username(credentials)
-    val = await ApiDB.GetDocument(file_id)
-    return FileResponse(val)
+    qu = document.select().where(document.c.id == file_id)
+    row = await ApiDB.fetch_one(qu)
+    return FileResponse(row.get("path"))

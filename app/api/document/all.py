@@ -1,20 +1,23 @@
 from fastapi import APIRouter, Depends
 from .model import *
-from app.database import ApiDB
-import aiofiles
+from app.database import (
+    ApiDB,
+    document,
+)
 
 router = APIRouter()
 
 
-@router.delete("/",
-               summary="Запрос на удаление документа из категории или подкатегории",
-               response_model=DeleteDocumentResponse,
-               response_description="Результат запроса на удаление документа из категории или подкатегории")
-async def delete_document(req: DeleteDocumentRequest = Depends()):  # ,
-    # credentials: HTTPBasicCredentials = Depends(security)):
-    # get_current_username(credentials)
-    val = await ApiDB.DeleteDocument(req.Name, req.CategoryId)
-    if val is not None:
-        await aiofiles.os.remove(val.get("path"))
-        return DeleteDocumentResponse(status="OK", result="")
-    return DeleteDocumentResponse(status="Fault", result="")
+@router.get("/",
+            summary="Запрос на получение всех файлов в выбраной категории или подкатегорий",
+            response_model=list,
+            response_description="Результат запроса на получение всех файлов в выбраной категории или подкатегорий")
+async def all_document(req: AllDocumentRequest = Depends()):
+    data_response = []
+    qu = document.select().where(document.c.lincid == req.CategoryId)
+    row = await ApiDB.fetch_all(qu)
+    for el in row:
+        data_response.append(
+            AllDocumentResponse(name=el.get("name"), url="/get/document?file_id={0}".format(el.get("id"))))
+    return data_response
+

@@ -1,8 +1,14 @@
 from fastapi import APIRouter
 from .model import *
-from app.database import ApiDB
+from app.database import (
+    ApiDB,
+    category,
+    document
+)
+import sqlalchemy
 import aiofiles
-import  os
+import os
+
 router = APIRouter()
 
 
@@ -13,10 +19,21 @@ router = APIRouter()
 async def add_document(CategoryId: int, Document: UploadFile = File(...)):  # ,
     # credentials: HTTPBasicCredentials = Depends(security)):
     # get_current_username(credentials)
-    new_path = os.environ["FILE_SAVE_PATH"]  # DEFINE_PATH + "_" + str(CategoryId) + "_" + Document.filename
-    if await ApiDB.AddDocument(CategoryId, Document.filename, new_path):
-        async with aiofiles.open(new_path, 'wb') as out_file:
-            binfile = await Document.read()
-            await out_file.write(binfile)
-        return AddDocumentResponse(status="OK", result="")
+    new_path = os.environ["FILE_SAVE_PATH"] + str(
+        CategoryId) + "_" + Document.filename
+    try:
+        qu = sqlalchemy.select([sqlalchemy.func.count()]).select_from(category).where(
+            category.c.id == CategoryId)
+        row = await ApiDB.fetch_one(qu)
+        if row[0] != 0:
+            qu = document.insert()
+            await ApiDB.execute(qu, {"lincid": CategoryId,
+                                     "name": Document.filename,
+                                     "path": new_path})
+            async with aiofiles.open(new_path, 'wb') as out_file:
+                binfile = await Document.read()
+                await out_file.write(binfile)
+                return AddDocumentResponse(status="OK", result="")
+    except:
+        pass
     return AddDocumentResponse(status="Fault", result="")

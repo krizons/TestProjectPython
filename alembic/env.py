@@ -20,7 +20,7 @@ fileConfig(config.config_file_name)
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-from app.database.BdModel import metadata
+from app.database.db_model import metadata
 
 target_metadata = [metadata]
 

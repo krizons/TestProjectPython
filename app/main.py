@@ -35,12 +35,12 @@ app.include_router(
 @app.on_event("startup")
 async def startup():
     pass
-    await ApiDB.ConnectBd()
+    await ApiDB.connect()
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    await ApiDB.Close()
+    await ApiDB.disconnect()
 
 
 if __name__ == "__main__":
