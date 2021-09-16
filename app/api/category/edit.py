@@ -4,7 +4,11 @@ from app.database import (
     ApiDB,
     category
 )
-
+from app.depends import (
+    HTTPBasicCredentials,
+    get_current_username,
+    security
+)
 router = APIRouter()
 
 
@@ -12,9 +16,9 @@ router = APIRouter()
              summary="Запрос на изменение категории или подкатегории",
              response_model=EditCategoryResponse,
              response_description="Результат запроса на изменение категории или подкатегории")
-async def edit_category(
-        req: EditCategoryRequest = Depends()):  # , credentials: HTTPBasicCredentials = Depends(security)):
-    # get_current_username(credentials)
+async def edit_category(req: EditCategoryRequest = Depends(),
+                        credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     param = {}
     if req.heading is not None:
         param["heading"] = req.heading

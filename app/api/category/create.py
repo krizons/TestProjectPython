@@ -5,6 +5,11 @@ from app.database import (
     ApiDB,
     category
 )
+from app.depends import (
+    HTTPBasicCredentials,
+    get_current_username,
+    security
+)
 
 router = APIRouter()
 
@@ -13,9 +18,9 @@ router = APIRouter()
              summary='Запрос на создание категории или подкатегории',
              response_model=CreateCategoryResponse,
              response_description="Результат запроса на создание категории или подкатегории")
-async def create_category(req: CreateCategoryRequest = Depends()):  # ,
-    # credentials: HTTPBasicCredentials = Depends(security)):
-    # get_current_username(credentials)
+async def create_category(req: CreateCategoryRequest = Depends(),
+                          credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     qu = sqlalchemy.select([sqlalchemy.func.count()]).select_from(category).where(
         category.c.heading == req.heading,
         category.c.subid == req.subid)

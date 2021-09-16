@@ -1,13 +1,19 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,Depends
 from .model import *
+import sqlalchemy
+import aiofiles
+import os
 from app.database import (
     ApiDB,
     category,
     document
 )
-import sqlalchemy
-import aiofiles
-import os
+from app.depends import (
+    HTTPBasicCredentials,
+    get_current_username,
+    security
+)
+
 
 router = APIRouter()
 
@@ -16,9 +22,9 @@ router = APIRouter()
             summary="Запрос на добавление документа в категорию или подкатегорию",
             response_model=AddDocumentResponse,
             response_description="Запрос на добавление документа в категорию или подкатегорию")
-async def add_document(CategoryId: int, Document: UploadFile = File(...)):  # ,
-    # credentials: HTTPBasicCredentials = Depends(security)):
-    # get_current_username(credentials)
+async def add_document(CategoryId: int, Document: UploadFile = File(...),
+                       credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     new_path = os.environ["FILE_SAVE_PATH"] + str(
         CategoryId) + "_" + Document.filename
     try:

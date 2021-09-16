@@ -1,22 +1,27 @@
 from fastapi import APIRouter, Depends
 from .model import *
-from app.database import ApiDB
 import aiofiles
 from app.database import (
     ApiDB,
     category,
     document
 )
+from app.depends import (
+    HTTPBasicCredentials,
+    get_current_username,
+    security
+)
+
 router = APIRouter()
 
 
 @router.delete("/",
-               summary="Запрос на далениие категории",
+               summary="Запрос на удалениие категории",
                response_model=DeleteCategoryResponse,
                response_description="Ответ на запрос удаления категории")
-async def delete_category(req: DeleteCategoryRequest = Depends()):  # ,
-    # credentials: HTTPBasicCredentials = Depends(security)):
-    #  get_current_username(credentials)
+async def delete_category(req: DeleteCategoryRequest = Depends(),
+                          credentials: HTTPBasicCredentials = Depends(security)):
+    get_current_username(credentials)
     list_id = [req.CategoryId]
     qu_id = [req.CategoryId]
     list_path = []

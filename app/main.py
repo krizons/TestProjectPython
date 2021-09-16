@@ -1,24 +1,13 @@
-from fastapi import FastAPI, HTTPException, status
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi import FastAPI
+
 from dotenv import load_dotenv
-import secrets
+
 import uvicorn
 import os
 from database import ApiDB
 import api
 
-security = HTTPBasic()
 
-
-def get_current_username(credentials: HTTPBasicCredentials):
-    correct_username = secrets.compare_digest(credentials.username, os.environ["LOGIN"])
-    correct_password = secrets.compare_digest(credentials.password, os.environ["PASS"])
-    if not (correct_username and correct_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Basic"},
-        )
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,7 +23,6 @@ app.include_router(
 
 @app.on_event("startup")
 async def startup():
-    pass
     await ApiDB.connect()
 
 
