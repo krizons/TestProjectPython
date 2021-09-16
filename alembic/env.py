@@ -8,7 +8,6 @@ import os, sys
 from dotenv import load_dotenv
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-from app import BdModel
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 sys.path.append(BASE_DIR)
@@ -21,7 +20,7 @@ fileConfig(config.config_file_name)
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-from app.BdModel import metadata
+from app.database.BdModel import metadata
 
 target_metadata = [metadata]
 
@@ -31,7 +30,7 @@ target_metadata = [metadata]
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+#  etc.
 
 
 def run_migrations_offline():

@@ -1,13 +1,13 @@
 # import asyncpg
 import databases
 import sqlalchemy
-from app.BdModel import Category, Document
+from app.database.BdModel import Category, Document
 
 
 # DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
 
-class TestApiBd:
+class MyDB:
     def __init__(self, bd_url: str) -> object:
         self.conn = databases.Database(bd_url)
         self.document = Document
