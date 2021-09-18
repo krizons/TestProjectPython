@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends
 from .model import *
 import aiofiles.os
-from app.database import (
+import os.path
+from database import (
     ApiDB,
     document,
 )
-from app.depends import (
+from depends import (
     HTTPBasicCredentials,
     get_current_username,
     security
@@ -21,10 +22,11 @@ router = APIRouter()
 async def delete_document(req: DeleteDocumentRequest = Depends(),
                           credentials: HTTPBasicCredentials = Depends(security)):
     get_current_username(credentials)
-    qu = not document.delete().returning(document.c.path).where(document.c.name == req.Name,
-                                                                document.c.lincid == req.CategoryId)
+    qu = document.delete().returning(document.c.path).where(document.c.id == req.document_id)
     row = await ApiDB.fetch_one(qu)
     if row is not None:
-        await aiofiles.os.remove(row.get("path"))
-        return DeleteDocumentResponse(status="OK", result="")
+        if os.path.isfile(row.get("path")):
+            await aiofiles.os.remove(row.get("path"))
+            return DeleteDocumentResponse(status="OK", result="")
+
     return DeleteDocumentResponse(status="Fault", result="")

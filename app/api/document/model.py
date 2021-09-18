@@ -36,18 +36,15 @@ class AddDocumentResponse(BaseModel):
 
 
 class DeleteDocumentRequest(BaseModel):
-    Name: str
-    CategoryId: int
+    document_id: int
 
     class Config:
         title = "Запрос на удаление файла"
-        fields = dict(
+        document_id = dict(
             Name=dict(
-                title="Имя файла"
+                title="Id файла"
             ),
-            CategoryId=dict(
-                title="Идентификатор категории можно получить используя /all/category"
-            )
+
         )
 
 
@@ -83,6 +80,7 @@ class AllDocumentRequest(BaseModel):
 class AllDocumentResponse(BaseModel):
     name: str
     url: str
+    id: int
 
     class Config:
         title = "Список файлов в данной категории"
@@ -92,5 +90,8 @@ class AllDocumentResponse(BaseModel):
             ),
             url=dict(
                 title="Ссылка на скачивание"
+            ),
+            id=dict(
+                title="ID документа"
             )
         )

@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends
 from .model import *
-from app.database import (
+from database import (
     ApiDB,
     category,
 )
-from app.depends import(
+from depends import(
     HTTPBasicCredentials,
     get_current_username,
     security
 )
-from app.depends import (
+from depends import (
     HTTPBasicCredentials,
     get_current_username,
     security

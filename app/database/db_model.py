@@ -4,16 +4,20 @@ metadata = sqlalchemy.MetaData()
 document = sqlalchemy.Table(
     "document",
     metadata,
-    sqlalchemy.Column("name", sqlalchemy.String, nullable=False, unique=True),
-    sqlalchemy.Column("lincid", sqlalchemy.Integer, nullable=False, unique=True),
+    sqlalchemy.Column("name", sqlalchemy.String, nullable=False),
+    sqlalchemy.Column("lincid", sqlalchemy.Integer, nullable=False),
     sqlalchemy.Column("id", sqlalchemy.Integer, nullable=False, primary_key=True, autoincrement=True),
-    sqlalchemy.Column("path", sqlalchemy.String, nullable=False))
+    sqlalchemy.Column("path", sqlalchemy.String, nullable=False),
+    sqlalchemy.UniqueConstraint('name', 'lincid', name='name_lincid_unique')
+    )
 category = sqlalchemy.Table(
     "category",
     metadata,
-    sqlalchemy.Column("heading", sqlalchemy.String, nullable=False, unique=True),
+    sqlalchemy.Column("heading", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("subtitle", sqlalchemy.String),
     sqlalchemy.Column("description", sqlalchemy.String),
     sqlalchemy.Column("image", sqlalchemy.String),
-    sqlalchemy.Column("subid", sqlalchemy.Integer, unique=True),
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True, nullable=False, autoincrement=True))
+    sqlalchemy.Column("subid", sqlalchemy.Integer),
+    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True, nullable=False, autoincrement=True),
+    sqlalchemy.UniqueConstraint('heading', 'subid')
+    )

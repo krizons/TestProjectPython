@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from .model import *
-from app.database import (
+from database import (
     ApiDB,
     document,
 )
-from app.depends import (
+from depends import (
     HTTPBasicCredentials,
     get_current_username,
     security
@@ -25,6 +25,6 @@ async def all_document(req: AllDocumentRequest = Depends(),
     row = await ApiDB.fetch_all(qu)
     for el in row:
         data_response.append(
-            AllDocumentResponse(name=el.get("name"), url="/get/document?file_id={0}".format(el.get("id"))))
+            AllDocumentResponse(name=el.get("name"), url="/document/get?file_id={0}".format(el.get("id")),id=el.get("id")))
     return data_response
 

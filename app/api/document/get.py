@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse
-from app.database import (
+from database import (
     ApiDB,
     document
 )
-from app.depends import (
+from depends import (
     HTTPBasicCredentials,
     get_current_username,
     security

@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends
 from .model import *
 import aiofiles
-from app.database import (
+import os.path
+from database import (
     ApiDB,
     category,
     document
 )
-from app.depends import (
+from depends import (
     HTTPBasicCredentials,
     get_current_username,
     security
@@ -40,5 +41,6 @@ async def delete_category(req: DeleteCategoryRequest = Depends(),
         for el in row:
             list_path.append(el.get("path"))
     for el in list_path:
-        await aiofiles.os.remove(el)
+        if os.path.isfile(el):
+            await aiofiles.os.remove(el)
     return DeleteCategoryResponse(status="Ok", result="")

@@ -3,12 +3,13 @@ from .model import *
 import sqlalchemy
 import aiofiles
 import os
-from app.database import (
+from conf import settings
+from database import (
     ApiDB,
     category,
     document
 )
-from app.depends import (
+from depends import (
     HTTPBasicCredentials,
     get_current_username,
     security
@@ -25,7 +26,7 @@ router = APIRouter()
 async def add_document(CategoryId: int, Document: UploadFile = File(...),
                        credentials: HTTPBasicCredentials = Depends(security)):
     get_current_username(credentials)
-    new_path = os.environ["FILE_SAVE_PATH"] + str(
+    new_path = settings.FILE_SAVE_PATH + str(
         CategoryId) + "_" + Document.filename
     try:
         qu = sqlalchemy.select([sqlalchemy.func.count()]).select_from(category).where(
