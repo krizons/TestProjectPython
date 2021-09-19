@@ -3,8 +3,6 @@ from typing import Optional
 from fastapi import File, UploadFile
 
 
-
-
 class CreateCategoryRequest(BaseModel):
     heading: str
     subtitle: str
@@ -35,13 +33,13 @@ class CreateCategoryResponse(BaseModel):
     result: str
 
     class Config:
-        title = "Запрос на сложение A и B"
+        title = "Результат на запрос создание категории или под категории"
         fields = dict(
-            A=dict(
-                title="Первое слагаемое"
+            status=dict(
+                title="Статус операции"
             ),
-            B=dict(
-                title="Второй слагаемое"
+            result=dict(
+                title="Сообщение"
             )
         )
 
@@ -116,13 +114,9 @@ class DeleteCategoryResponse(BaseModel):
                 title="Статус операции"
             ),
             result=dict(
-                title="описание события"
+                title="Сообщение"
             )
         )
-
-
-
-
 
 
 class AllCategoryRequest(BaseModel):
@@ -149,9 +143,13 @@ class AllCategoryResponse(BaseModel):
             heading=dict(
                 title="Заголовок"
             ),
+            subtitle=dict(
+                title="Подзаголовок"
+            ),
+            description=dict(
+                title="Описание"
+            ),
             id=dict(
                 title="Id категории"
             )
         )
-
-
