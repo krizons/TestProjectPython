@@ -11,6 +11,6 @@ class Settings(BaseSettings):
     PGADMIN_PASSWORD: str
     LOGIN: str
     PASS: str
-    FILE_SAVE_PATH: str
+    IMAGE_SAVE_PATH: str
     class Config:
         env_file = ".env"

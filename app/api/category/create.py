@@ -27,7 +27,7 @@ async def create_category(req: CreateCategoryRequest = Depends(), image: UploadF
     qu = sqlalchemy.select([sqlalchemy.func.count()]).select_from(category).where(
         category.c.heading == req.heading,
         category.c.subid == req.subid)
-    image_path = settings.FILE_SAVE_PATH + str(random.randint(0, 1000000)) + "_" + image.filename
+    image_path = settings.IMAGE_SAVE_PATH + str(random.randint(0, 1000000)) + "_" + image.filename
     row = await ApiDB.fetch_one(qu)
     if row[0] == 0:
         qu = sqlalchemy.select([sqlalchemy.func.count()]).select_from(category).where(
