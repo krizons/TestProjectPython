@@ -34,6 +34,7 @@ async def delete_category(req: DeleteCategoryRequest = Depends(),
         for el in row:
             qu_id.append(el.get("id"))
             list_id.append(el.get("id"))
+            list_path.append(el.get("image"))
     for id in list_id:
         qu = document.select().where(document.c.lincid == id)
         row = await ApiDB.fetch_all(qu)
