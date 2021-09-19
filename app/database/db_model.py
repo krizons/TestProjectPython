@@ -17,7 +17,6 @@ category = sqlalchemy.Table(
     sqlalchemy.Column("image", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("subtitle", sqlalchemy.String),
     sqlalchemy.Column("description", sqlalchemy.String),
-    sqlalchemy.Column("image", sqlalchemy.String),
     sqlalchemy.Column("subid", sqlalchemy.Integer),
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True, nullable=False, autoincrement=True),
     sqlalchemy.UniqueConstraint('heading', 'subid')
