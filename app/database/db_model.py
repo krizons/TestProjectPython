@@ -14,6 +14,7 @@ category = sqlalchemy.Table(
     "category",
     metadata,
     sqlalchemy.Column("heading", sqlalchemy.String, nullable=False),
+    sqlalchemy.Column("image", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("subtitle", sqlalchemy.String),
     sqlalchemy.Column("description", sqlalchemy.String),
     sqlalchemy.Column("image", sqlalchemy.String),

@@ -3,7 +3,8 @@ from . import (
     all,
     create,
     delete,
-    edit
+    edit,
+    image
 
 )
 
@@ -27,4 +28,8 @@ router.include_router(
 router.include_router(
     edit.router,
     prefix="/edit"
+)
+router.include_router(
+    image.router,
+    prefix="/image"
 )
